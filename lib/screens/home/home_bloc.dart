@@ -21,7 +21,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       print(currentUser);
     } on FirebaseAuthException catch (e) {
-      print(e.message);
       emit(HomeError());
     }
   }
