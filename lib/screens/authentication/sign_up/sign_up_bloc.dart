@@ -1,32 +1,35 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:happy_hour_app/models/user.dart';
+import 'package:happy_hour_app/screens/authentication/authentication_bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'sign_up_event.dart';
 part 'sign_up_state.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
-  final FirebaseAuth _firebaseAuth;
+  final AuthenticationBloc authBloc;
 
-  SignUpBloc(this._firebaseAuth) : super(SignUpInitial()) {
-    on<SignUpWithEmailAndPassword>(_onSignUpWithEmailAndPassword);
+  SignUpBloc({required this.authBloc}) : super(SignUpInitial()) {
+    on<SignUpWithEmailAndPasswordButtonPressed>(
+        _onSignUpWithEmailAndPasswordButtonPressed);
   }
 
-  Future<void> _onSignUpWithEmailAndPassword(
-      SignUpWithEmailAndPassword event, Emitter<SignUpState> emit) async {
-    final String email = event.user.email;
-    final String password = event.user.password;
-
+  Future<void> _onSignUpWithEmailAndPasswordButtonPressed(
+    SignUpWithEmailAndPasswordButtonPressed event,
+    Emitter<SignUpState> emit,
+  ) async {
+    emit(SignUpWithEmailAndPasswordFailedLoading());
     try {
-      await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
+      authBloc.add(SignUpWithEmailAndPassword(userModel: event.user));
+      emit(SignUpInitial());
+    } on FirebaseAuthException catch (e) {
+      emit(
+        SignUpWithEmailAndPasswordFailedFailure(
+          error: e.message.toString(),
+        ),
       );
-
-      emit(SignUpWithEmailAndPasswordSuccess());
-    } catch (e) {
-      print(e);
     }
   }
 }

@@ -1,33 +1,32 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:happy_hour_app/models/user.dart';
+import 'package:happy_hour_app/screens/authentication/authentication_bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'sign_in_event.dart';
 part 'sign_in_state.dart';
 
 class SignInBloc extends Bloc<SignInEvent, SignInState> {
-  final FirebaseAuth _firebaseAuth;
-  SignInBloc(this._firebaseAuth) : super(SignInInitial()) {
-    on<SignIn>(_onSignIn);
-    on<SignOut>(_onSignOut);
+  final AuthenticationBloc authBloc;
+
+  SignInBloc({required this.authBloc}) : super(SignInInitial()) {
+    on<SignInButtonPressed>(_onSignInButtonPressed);
   }
 
-  Future<void> _onSignIn(SignIn event, Emitter<SignInState> emitter) async {
-    final String email = event.userModel.email;
-    final String password = event.userModel.password;
+  Future<void> _onSignInButtonPressed(
+      SignInButtonPressed event, Emitter<SignInState> emitter) async {
+    emit(SignInLoading());
 
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
-      emit(SignInSuccess());
-    } catch (e) {
-      emit(SignInFailed());
+      authBloc.add(SignInWithEmailAndPassword(userModel: event.userModel));
+      emit(SignInInitial());
+    } on FirebaseAuthException catch (e) {
+      emit(
+        SignInFailure(
+          error: e.message.toString(),
+        ),
+      );
     }
-  }
-
-  Future<void> _onSignOut(SignOut event, Emitter<SignInState> emitter) async {
-    await _firebaseAuth.signOut();
-    emit(SignOutSuccess());
   }
 }

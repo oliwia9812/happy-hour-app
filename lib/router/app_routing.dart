@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
 import 'package:happy_hour_app/constants.dart';
+import 'package:happy_hour_app/screens/app/app.dart';
 import 'package:happy_hour_app/screens/authentication/forgot_password/forgot_password_screen.dart';
+import 'package:happy_hour_app/screens/authentication/forgot_password/reset_password_screen.dart';
 import 'package:happy_hour_app/screens/authentication/sign_up/sign_up_screen.dart';
 import 'package:happy_hour_app/screens/authentication/sign_in/sign_in_screen.dart';
 import 'package:happy_hour_app/screens/error/error_screen.dart';
@@ -12,7 +14,12 @@ class AppRouting {
     routes: <GoRoute>[
       GoRoute(
         path: "/",
-        redirect: (state) => state.namedLocation(Constants.homeRouteName),
+        redirect: (state) => Constants.appRouteName,
+      ),
+      GoRoute(
+        name: Constants.appRouteName,
+        path: Constants.appRouteName,
+        builder: (context, state) => const App(),
       ),
       GoRoute(
         name: Constants.signUpRouteName,
@@ -33,6 +40,11 @@ class AppRouting {
         name: Constants.homeRouteName,
         path: Constants.homeRouteName,
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        name: Constants.resetPasswordSuccessRouteName,
+        path: Constants.resetPasswordSuccessRouteName,
+        builder: (context, state) => const ResetPasswordScreen(),
       ),
     ],
     errorBuilder: (context, state) => const ErrorScreen(),

@@ -17,9 +17,9 @@ class ForgotPasswordBloc
     final String email = event.email;
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
+      emit(ResetPasswordSuccess());
     } on FirebaseAuthException catch (e) {
-      print(e);
-      print(e.message);
+      ResetPasswordFailed(error: e.message.toString());
     }
   }
 }

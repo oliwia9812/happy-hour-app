@@ -5,10 +5,10 @@ abstract class SignInState {}
 
 class SignInInitial extends SignInState {}
 
-class SignInSuccess extends SignInState {}
+class SignInLoading extends SignInState {}
 
-class SignInFailed extends SignInState {}
+class SignInFailure extends SignInState {
+  final String error;
 
-class SignOutSuccess extends SignInState {}
-
-class SignOutFailed extends SignInState {}
+  SignInFailure({required this.error});
+}

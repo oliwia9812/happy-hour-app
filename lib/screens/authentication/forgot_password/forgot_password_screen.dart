@@ -9,7 +9,6 @@ import 'package:happy_hour_app/screens/common_widgets/custom_label.dart';
 import 'package:happy_hour_app/screens/common_widgets/custom_text_field.dart';
 import 'package:happy_hour_app/styles/app_colors.dart';
 import 'package:happy_hour_app/styles/app_decorations.dart';
-import 'package:happy_hour_app/styles/app_text_styles.dart';
 import 'package:go_router/go_router.dart';
 import 'package:happy_hour_app/screens/authentication/validation.dart';
 
@@ -22,17 +21,24 @@ class ForgotPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 84.0),
-        child: Stack(
-          children: [
-            _buildBackButton(context),
-            _buildTitle(),
-            _buildForm(context),
-          ],
+    return BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
+      listener: (context, state) {
+        if (state is ResetPasswordSuccess) {
+          context.go(Constants.resetPasswordSuccessRouteName);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
+          minimum: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 84.0),
+          child: Stack(
+            children: [
+              _buildBackButton(context),
+              _buildHeader(),
+              _buildForm(context),
+            ],
+          ),
         ),
       ),
     );
@@ -54,23 +60,13 @@ class ForgotPasswordScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle() {
-    return Positioned(
+  Widget _buildHeader() {
+    return const Positioned(
       top: 64.0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const AuthHeader(headerTitle: "Reset your password"),
-          _buildSubtitle(),
-        ],
+      child: AuthHeader(
+        headerTitle: "Reset your password",
+        subtitle: "Enter your registered email",
       ),
-    );
-  }
-
-  Widget _buildSubtitle() {
-    return const Text(
-      "Enter your registered email ",
-      style: AppTextStyles.body,
     );
   }
 

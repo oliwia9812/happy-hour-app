@@ -7,4 +7,8 @@ class ForgotPasswordInitial extends ForgotPasswordState {}
 
 class ResetPasswordSuccess extends ForgotPasswordState {}
 
-class ResetPasswordFailed extends ForgotPasswordState {}
+class ResetPasswordFailed extends ForgotPasswordState {
+  final String error;
+
+  ResetPasswordFailed({required this.error});
+}

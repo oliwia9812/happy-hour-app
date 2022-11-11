@@ -108,7 +108,7 @@ class SignUpForm extends StatelessWidget {
             );
 
             BlocProvider.of<SignUpBloc>(context).add(
-              SignUpWithEmailAndPassword(user: userModel),
+              SignUpWithEmailAndPasswordButtonPressed(user: userModel),
             );
           }
         },

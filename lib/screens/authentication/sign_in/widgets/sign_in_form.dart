@@ -111,7 +111,7 @@ class SignInForm extends StatelessWidget {
           );
 
           BlocProvider.of<SignInBloc>(context)
-              .add(SignIn(userModel: userModel));
+              .add(SignInButtonPressed(userModel: userModel));
         }
       },
     );

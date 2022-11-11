@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:happy_hour_app/constants.dart';
-import 'package:happy_hour_app/screens/authentication/sign_up/sign_up_bloc.dart';
+import 'package:happy_hour_app/screens/authentication/authentication_bloc.dart';
 import 'package:happy_hour_app/screens/authentication/sign_up/widgets/sign_up_footer.dart';
 import 'package:happy_hour_app/screens/authentication/sign_up/widgets/sign_up_form.dart';
 import 'package:happy_hour_app/screens/authentication/widgets/auth_header.dart';
 import 'package:happy_hour_app/screens/common_widgets/custom_divider.dart';
 import 'package:happy_hour_app/styles/app_colors.dart';
-import 'package:go_router/go_router.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SignUpBloc, SignUpState>(
+    return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
-        if (state is SignUpWithEmailAndPasswordSuccess) {
+        if (state is AuthenticationAuthenticated) {
           context.go(Constants.homeRouteName);
         }
       },
@@ -29,9 +29,11 @@ class SignUpScreen extends StatelessWidget {
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const AuthHeader(
-                headerTitle: "Create an Account",
+                headerTitle: "Welcome in HappyHour!",
+                subtitle: "Create your free account",
               ),
               SignUpForm(),
               const CustomDivider(),

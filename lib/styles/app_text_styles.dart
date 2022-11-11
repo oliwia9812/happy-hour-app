@@ -44,4 +44,10 @@ class AppTextStyles {
     fontSize: 26.0,
     fontWeight: FontWeight.w700,
   );
+
+  static const TextStyle splashTitle = TextStyle(
+    color: AppColors.white,
+    fontSize: 42.0,
+    fontWeight: FontWeight.w700,
+  );
 }

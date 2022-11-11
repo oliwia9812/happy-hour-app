@@ -5,6 +5,10 @@ abstract class SignUpState {}
 
 class SignUpInitial extends SignUpState {}
 
-class SignUpWithEmailAndPasswordSuccess extends SignUpState {}
+class SignUpWithEmailAndPasswordFailedFailure extends SignUpState {
+  final String error;
 
-class SignUpWithEmailAndPasswordFailed extends SignUpState {}
+  SignUpWithEmailAndPasswordFailedFailure({required this.error});
+}
+
+class SignUpWithEmailAndPasswordFailedLoading extends SignUpState {}
