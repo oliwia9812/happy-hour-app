@@ -24,7 +24,9 @@ class SignInScreen extends StatelessWidget {
         backgroundColor: AppColors.white,
         resizeToAvoidBottomInset: false,
         body: SafeArea(
-          minimum: const EdgeInsets.symmetric(horizontal: 32.0),
+          minimum: const EdgeInsets.symmetric(
+            horizontal: 32.0,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,

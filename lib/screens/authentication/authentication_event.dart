@@ -9,16 +9,22 @@ abstract class AuthenticationEvent extends Equatable {
 
 class AppStarted extends AuthenticationEvent {}
 
-class SignUpWithEmailAndPassword extends AuthenticationEvent {
+class SignUp extends AuthenticationEvent {
   final UserModel userModel;
 
-  const SignUpWithEmailAndPassword({required this.userModel});
+  const SignUp({required this.userModel});
+
+  @override
+  List<Object> get props => [userModel];
 }
 
-class SignInWithEmailAndPassword extends AuthenticationEvent {
+class SignIn extends AuthenticationEvent {
   final UserModel userModel;
 
-  const SignInWithEmailAndPassword({required this.userModel});
+  const SignIn({required this.userModel});
+
+  @override
+  List<Object> get props => [userModel];
 }
 
 class SignOut extends AuthenticationEvent {}

@@ -23,6 +23,14 @@ class ForgotPasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
       listener: (context, state) {
+        if (state is ResetPasswordFailed) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.error),
+              backgroundColor: AppColors.red,
+            ),
+          );
+        }
         if (state is ResetPasswordSuccess) {
           context.go(Constants.resetPasswordSuccessRouteName);
         }

@@ -20,6 +20,12 @@ class AppTextStyles {
     letterSpacing: 0.3,
   );
 
+  static const TextStyle error = TextStyle(
+    color: AppColors.red,
+    fontSize: 15.0,
+    fontWeight: FontWeight.w500,
+  );
+
   static const TextStyle label = TextStyle(
     color: AppColors.darkGray,
     fontSize: 20.0,

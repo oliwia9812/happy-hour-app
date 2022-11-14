@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:happy_hour_app/constants.dart';
 import 'package:happy_hour_app/models/user.dart';
+import 'package:happy_hour_app/screens/authentication/authentication_bloc.dart';
 import 'package:happy_hour_app/screens/authentication/form_values.dart';
-import 'package:happy_hour_app/screens/authentication/sign_in/sign_in_bloc.dart';
 import 'package:happy_hour_app/screens/authentication/sign_in/sign_in_forgot_password.dart';
 import 'package:happy_hour_app/screens/authentication/widgets/auth_toggle.dart';
 import 'package:happy_hour_app/screens/common_widgets/custom_button.dart';
 import 'package:happy_hour_app/screens/common_widgets/custom_label.dart';
 import 'package:happy_hour_app/screens/common_widgets/custom_text_field.dart';
 import 'package:go_router/go_router.dart';
+import 'package:happy_hour_app/styles/app_colors.dart';
 import 'package:happy_hour_app/utils/validation_helper.dart';
 
 final GlobalKey<FormState> _keyForm = GlobalKey<FormState>();
@@ -35,20 +36,34 @@ class SignInForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 18.0),
-      child: Form(
-        key: _keyForm,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            _buildFormFields(),
-            _buildForgotPasswordButton(),
-            _buildSignInButton(context),
-            _buildToggleToSignUp(context),
-          ],
-        ),
-      ),
+    return BlocConsumer<AuthenticationBloc, AuthenticationState>(
+      listener: (context, state) {
+        if (state is AuthenticationError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: AppColors.red,
+              content: Text(state.error),
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 18.0),
+          child: Form(
+            key: _keyForm,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _buildFormFields(),
+                _buildForgotPasswordButton(),
+                _buildSignInButton(context),
+                _buildToggleToSignUp(context),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -110,8 +125,8 @@ class SignInForm extends StatelessWidget {
             password: user["Password"],
           );
 
-          BlocProvider.of<SignInBloc>(context)
-              .add(SignInButtonPressed(userModel: userModel));
+          BlocProvider.of<AuthenticationBloc>(context)
+              .add(SignIn(userModel: userModel));
         }
       },
     );

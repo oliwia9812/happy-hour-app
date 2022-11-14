@@ -27,9 +27,19 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
+        listener: (context, state) {
+          if (state is AuthenticationError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: AppColors.red,
+                content: Text(state.error),
+              ),
+            );
+          }
+        },
         builder: (context, state) {
-          if (state is AuthenticationUnInitialized) {
+          if (state is AuthenticationUninitialized) {
             return const SplashScreen();
           }
           if (state is AuthenticationAuthenticated) {
