@@ -1,40 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:happy_hour_app/constants.dart';
 import 'package:happy_hour_app/generated/app_icons.dart';
-import 'package:happy_hour_app/screens/authentication/forgot_password/forgot_password_bloc.dart';
+import 'package:happy_hour_app/repositories/authentication/authentication_repository.dart';
+import 'package:happy_hour_app/screens/authentication/forgot_password/cubit/forgot_password_cubit.dart';
+import 'package:happy_hour_app/screens/authentication/forgot_password/widgets/forgot_password_form.dart';
+import 'package:happy_hour_app/screens/authentication/sign_in/sign_in_screen.dart';
 import 'package:happy_hour_app/screens/authentication/widgets/auth_header.dart';
-import 'package:happy_hour_app/screens/common_widgets/custom_button.dart';
-import 'package:happy_hour_app/screens/common_widgets/custom_label.dart';
-import 'package:happy_hour_app/screens/common_widgets/custom_text_field.dart';
 import 'package:happy_hour_app/styles/app_colors.dart';
 import 'package:happy_hour_app/styles/app_decorations.dart';
-import 'package:go_router/go_router.dart';
-import 'package:happy_hour_app/screens/authentication/validation.dart';
 
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-class ForgotPasswordScreen extends StatelessWidget {
-  ForgotPasswordScreen({super.key});
-
-  String email = "";
+class ForgotPasswordScreen extends StatefulWidget {
+  static String route = "/forgot-password";
+  const ForgotPasswordScreen({super.key});
 
   @override
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+}
+
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  @override
   Widget build(BuildContext context) {
-    return BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
-      listener: (context, state) {
-        if (state is ResetPasswordFailed) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.error),
-              backgroundColor: AppColors.red,
-            ),
-          );
-        }
-        if (state is ResetPasswordSuccess) {
-          context.go(Constants.resetPasswordSuccessRouteName);
-        }
-      },
+    return BlocProvider<ForgotPasswordCubit>(
+      create: (context) => ForgotPasswordCubit(
+        authenticationRepository: context.read<AuthenticationRepository>(),
+      ),
       child: Scaffold(
         backgroundColor: AppColors.white,
         resizeToAvoidBottomInset: false,
@@ -44,7 +33,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             children: [
               _buildBackButton(context),
               _buildHeader(),
-              _buildForm(context),
+              const ForgotPasswordForm(),
             ],
           ),
         ),
@@ -58,7 +47,7 @@ class ForgotPasswordScreen extends StatelessWidget {
       child: ElevatedButton(
         style: AppDecorations.roundedButton,
         onPressed: () {
-          context.go(Constants.signInRouteName);
+          Navigator.pushNamed(context, SignInScreen.route);
         },
         child: const Icon(
           AppIcons.arrowBack,
@@ -74,44 +63,6 @@ class ForgotPasswordScreen extends StatelessWidget {
       child: AuthHeader(
         headerTitle: "Reset your password",
         subtitle: "Enter your registered email",
-      ),
-    );
-  }
-
-  Widget _buildForm(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const CustomLabel(textFieldName: "Email"),
-          CustomTextField(
-            hintText: "JohnDoe@example.com",
-            validator: (value) => value!.isEmpty
-                ? "Enter your email"
-                : value.isEmailValid()
-                    ? "Please enter correct email address"
-                    : null,
-            onChanged: (value) {
-              if (value != null) {
-                email = value;
-              }
-            },
-          ),
-          const SizedBox(
-            height: 32.0,
-          ),
-          CustomButton(
-            buttonTitle: "Send",
-            callback: () {
-              if (_formKey.currentState!.validate()) {
-                BlocProvider.of<ForgotPasswordBloc>(context)
-                    .add(ResetPassword(email: email));
-              }
-            },
-          ),
-        ],
       ),
     );
   }

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:happy_hour_app/constants.dart';
+import 'package:happy_hour_app/screens/authentication/forgot_password/forgot_password_screen.dart';
 import 'package:happy_hour_app/styles/app_text_styles.dart';
-import 'package:go_router/go_router.dart';
 
-class ForgotPassword extends StatelessWidget {
-  const ForgotPassword({super.key});
+class ForgotPasswordWidget extends StatelessWidget {
+  const ForgotPasswordWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +15,7 @@ class ForgotPassword extends StatelessWidget {
           style: AppTextStyles.body,
         ),
         onTap: () {
-          context.go(Constants.forgotPasswordRouteName);
+          Navigator.pushNamed(context, ForgotPasswordScreen.route);
         },
       ),
     );

@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:happy_hour_app/constants.dart';
-import 'package:happy_hour_app/models/user.dart';
-import 'package:happy_hour_app/screens/authentication/authentication_bloc.dart';
+import 'package:happy_hour_app/models/user_model.dart';
 import 'package:happy_hour_app/screens/authentication/form_values.dart';
+import 'package:happy_hour_app/screens/authentication/sign_in/sign_in_screen.dart';
+import 'package:happy_hour_app/screens/authentication/sign_up/cubit/sign_up_cubit.dart';
 import 'package:happy_hour_app/screens/authentication/widgets/auth_toggle.dart';
 import 'package:happy_hour_app/screens/common_widgets/custom_button.dart';
 import 'package:happy_hour_app/screens/common_widgets/custom_label.dart';
 import 'package:happy_hour_app/screens/common_widgets/custom_text_field.dart';
-import 'package:go_router/go_router.dart';
+import 'package:happy_hour_app/screens/home/home_screen.dart';
 import 'package:happy_hour_app/styles/app_colors.dart';
 import 'package:happy_hour_app/utils/validation_helper.dart';
 
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class SignUpForm extends StatefulWidget {
+  const SignUpForm({super.key});
 
-class SignUpForm extends StatelessWidget {
-  SignUpForm({super.key});
+  @override
+  State<SignUpForm> createState() => _SignUpFormState();
+}
 
-  static List<FormValues> formValues = [
+class _SignUpFormState extends State<SignUpForm> {
+  final Map<String, dynamic> _user = {};
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool _loading = false;
+
+  final List<FormValues> _formValues = [
     FormValues(
         hintText: "John",
         textFieldName: "Name",
@@ -33,13 +42,19 @@ class SignUpForm extends StatelessWidget {
             "Your password must be have at least 1 uppercase & 1 lowercase character, 1 number and 8 characters long"),
   ];
 
-  final Map<String, dynamic> user = {};
-
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthenticationBloc, AuthenticationState>(
+    return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
-        if (state is AuthenticationError) {
+        if (state is SignUpLoading) {
+          setState(() {
+            _loading = true;
+          });
+        }
+        if (state is SignUpFailure) {
+          setState(() {
+            _loading = false;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: AppColors.red,
@@ -47,23 +62,24 @@ class SignUpForm extends StatelessWidget {
             ),
           );
         }
+        if (state is SignUpSuccess) {
+          Navigator.pushNamed(context, HomeScreen.route);
+        }
       },
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.only(top: 18.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _buildFormFields(),
-                _buildSignUpButton(context),
-                _buildToggleToSignIn(context),
-              ],
-            ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 18.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              _buildFormFields(),
+              _buildSignUpButton(context),
+              _buildToggleToSignIn(context),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -79,16 +95,16 @@ class SignUpForm extends StatelessWidget {
         children: [
           CustomLabel(textFieldName: textFieldName),
           CustomTextField(
-            isPassword: formValues[index] == formValues.last,
+            isPassword: _formValues[index] == _formValues.last,
             hintText: hintText,
             validator: (value) => (value!.isEmpty)
-                ? "Enter Your ${formValues[index].textFieldName}"
+                ? "Enter Your ${_formValues[index].textFieldName}"
                 : (value.length < 3 ||
                         ValidationHelper.getValidation(value, textFieldName))
-                    ? formValues[index].errorValidationMessage
+                    ? _formValues[index].errorValidationMessage
                     : null,
             onChanged: (value) {
-              user[textFieldName] = value;
+              _user[textFieldName] = value;
             },
           ),
         ],
@@ -99,10 +115,10 @@ class SignUpForm extends StatelessWidget {
   Widget _buildFormFields() {
     return Column(
       children: List.generate(
-        formValues.length,
+        _formValues.length,
         (index) => _buildTextFieldWithLabel(
-          textFieldName: formValues[index].textFieldName,
-          hintText: formValues[index].hintText,
+          textFieldName: _formValues[index].textFieldName,
+          hintText: _formValues[index].hintText,
           index: index,
         ),
       ),
@@ -114,16 +130,20 @@ class SignUpForm extends StatelessWidget {
       padding: const EdgeInsets.only(top: 32.0),
       child: CustomButton(
         buttonTitle: "Sign up",
+        loading: _loading,
         callback: () {
           if (_formKey.currentState!.validate()) {
             UserModel userModel = UserModel(
-              name: user["Name"],
-              email: user["Email"],
-              password: user["Password"],
+              name: _user["Name"],
+              email: _user["Email"],
+              password: _user["Password"],
             );
 
-            BlocProvider.of<AuthenticationBloc>(context)
-                .add(SignUp(userModel: userModel));
+            context.read<SignUpCubit>().signUp(
+                  name: userModel.name ?? "",
+                  email: userModel.email,
+                  password: userModel.password,
+                );
           }
         },
       ),
@@ -132,7 +152,7 @@ class SignUpForm extends StatelessWidget {
 
   Widget _buildToggleToSignIn(BuildContext context) {
     return AuthToggle(
-        callback: () => context.go(Constants.signInRouteName),
+        callback: () => Navigator.pushNamed(context, SignInScreen.route),
         label: "Already have an account?",
         textButton: "Sign in");
   }
