@@ -6,7 +6,11 @@ class SharedPreferencesRepository {
   SharedPreferencesRepository({required SharedPreferences sharedPreferences})
       : _sharedPreferences = sharedPreferences;
 
-  Future<void> setUser() async {
-    _sharedPreferences.setString("user", "true");
+  Future<void> setUserIsLogged({required bool isLoggedIn}) async {
+    await _sharedPreferences.setBool('isLoggedIn', isLoggedIn);
+  }
+
+  bool? getUserIsLoggedIn() {
+    return _sharedPreferences.getBool('isLoggedIn');
   }
 }

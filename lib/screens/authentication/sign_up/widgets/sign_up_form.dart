@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:happy_hour_app/models/user_model.dart';
 import 'package:happy_hour_app/screens/authentication/form_values.dart';
 import 'package:happy_hour_app/screens/authentication/sign_in/sign_in_screen.dart';
 import 'package:happy_hour_app/screens/authentication/sign_up/cubit/sign_up_cubit.dart';
@@ -133,16 +132,10 @@ class _SignUpFormState extends State<SignUpForm> {
         loading: _loading,
         callback: () {
           if (_formKey.currentState!.validate()) {
-            UserModel userModel = UserModel(
-              name: _user["Name"],
-              email: _user["Email"],
-              password: _user["Password"],
-            );
-
             context.read<SignUpCubit>().signUp(
-                  name: userModel.name ?? "",
-                  email: userModel.email,
-                  password: userModel.password,
+                  name: _user["Name"],
+                  email: _user["Email"],
+                  password: _user["Password"],
                 );
           }
         },

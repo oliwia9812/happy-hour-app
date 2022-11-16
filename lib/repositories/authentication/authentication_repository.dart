@@ -6,9 +6,8 @@ enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 class AuthenticationRepository implements BaseAuthenticationRepository {
   final FirebaseAuth _firebaseAuth;
 
-  AuthenticationRepository({
-    required FirebaseAuth firebaseAuth,
-  }) : _firebaseAuth = firebaseAuth;
+  AuthenticationRepository({required FirebaseAuth firebaseAuth})
+      : _firebaseAuth = firebaseAuth;
 
   @override
   Future<void> signUp({
@@ -72,4 +71,6 @@ class AuthenticationRepository implements BaseAuthenticationRepository {
       }
     }
   }
+
+  User? get currentUser => _firebaseAuth.currentUser;
 }

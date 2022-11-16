@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:happy_hour_app/repositories/shared_preferences/shared_preferences_repository.dart';
 import 'package:happy_hour_app/screens/authentication/forgot_password/forgot_password_screen.dart';
 import 'package:happy_hour_app/screens/authentication/forgot_password/reset_password_screen.dart';
 import 'package:happy_hour_app/screens/authentication/sign_in/sign_in_screen.dart';
@@ -11,9 +13,14 @@ class AppRouter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool? userIsLogged =
+        context.read<SharedPreferencesRepository>().getUserIsLoggedIn();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: SignInScreen.route,
+      initialRoute: (userIsLogged != null && userIsLogged)
+          ? HomeScreen.route
+          : SignInScreen.route,
       routes: {
         SplashScreen.route: (context) => const SplashScreen(),
         SignUpScreen.route: (context) => const SignUpScreen(),

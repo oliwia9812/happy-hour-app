@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:happy_hour_app/models/user_model.dart';
 import 'package:happy_hour_app/screens/authentication/form_values.dart';
 import 'package:happy_hour_app/screens/authentication/sign_in/cubit/sign_in_cubit.dart';
 import 'package:happy_hour_app/screens/authentication/sign_in/widgets/sign_in_forgot_password.dart';
@@ -139,14 +138,9 @@ class _SignInFormState extends State<SignInForm> {
       loading: _loading,
       callback: () {
         if (_formKey.currentState!.validate()) {
-          UserModel userModel = UserModel(
-            email: _user["Email"],
-            password: _user["Password"],
-          );
-
           context
               .read<SignInCubit>()
-              .signIn(email: userModel.email, password: userModel.password);
+              .signIn(email: _user["Email"], password: _user["Password"]);
         }
       },
     );
