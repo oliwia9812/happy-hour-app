@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:happy_hour_app/repositories/authentication/authentication_repository.dart';
+import 'package:happy_hour_app/repositories/user/user_repository.dart';
 import 'package:happy_hour_app/screens/authentication/sign_up/cubit/sign_up_cubit.dart';
 import 'package:happy_hour_app/screens/authentication/sign_up/widgets/sign_up_footer.dart';
 import 'package:happy_hour_app/screens/authentication/sign_up/widgets/sign_up_form.dart';
@@ -17,6 +18,7 @@ class SignUpScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => SignUpCubit(
         authenticationRepository: context.read<AuthenticationRepository>(),
+        userRepository: context.read<UserRepository>(),
       ),
       child: Scaffold(
           backgroundColor: AppColors.white,

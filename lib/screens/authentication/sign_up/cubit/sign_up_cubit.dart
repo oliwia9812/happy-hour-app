@@ -1,13 +1,20 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:happy_hour_app/models/user_model.dart';
 import 'package:happy_hour_app/repositories/authentication/authentication_repository.dart';
+import 'package:happy_hour_app/repositories/user/user_repository.dart';
 
 part 'sign_up_state.dart';
 
 class SignUpCubit extends Cubit<SignUpState> {
   final AuthenticationRepository _authenticationRepository;
-  SignUpCubit({required AuthenticationRepository authenticationRepository})
-      : _authenticationRepository = authenticationRepository,
+  final UserRepository _userRepository;
+
+  SignUpCubit({
+    required AuthenticationRepository authenticationRepository,
+    required UserRepository userRepository,
+  })  : _authenticationRepository = authenticationRepository,
+        _userRepository = userRepository,
         super(SignUpInitial());
 
   Future<void> signUp({
@@ -23,6 +30,14 @@ class SignUpCubit extends Cubit<SignUpState> {
         password: password,
         name: name,
       );
+
+      UserModel user = UserModel(
+        name: _userRepository.currentUser!.displayName,
+        email: _userRepository.currentUser!.email!,
+        id: _userRepository.currentUser!.uid,
+      );
+
+      await _userRepository.updateUser(user: user);
 
       emit(SignUpSuccess());
       emit(SignUpInitial());

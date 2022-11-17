@@ -3,10 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:happy_hour_app/blocs/bloc/authentication_bloc.dart';
+import 'package:happy_hour_app/blocs/authentication/authentication_bloc.dart';
 import 'package:happy_hour_app/repositories/authentication/authentication_repository.dart';
-import 'package:happy_hour_app/repositories/database/database_repository.dart';
 import 'package:happy_hour_app/repositories/shared_preferences/shared_preferences_repository.dart';
+import 'package:happy_hour_app/repositories/user/user_repository.dart';
 import 'package:happy_hour_app/router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -48,15 +48,15 @@ class Application extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<UserRepository>(
+          create: (context) => UserRepository(
+            firebaseAuth: _firebaseAuth,
+            firebaseFirestore: _firebaseFirestore,
+          ),
+        ),
         RepositoryProvider<AuthenticationRepository>(
           create: (context) => AuthenticationRepository(
             firebaseAuth: _firebaseAuth,
-          ),
-        ),
-        RepositoryProvider<DatabaseRepository>(
-          create: (context) => DatabaseRepository(
-            firebaseAuth: _firebaseAuth,
-            firebaseFirestore: _firebaseFirestore,
           ),
         ),
         RepositoryProvider<SharedPreferencesRepository>(
@@ -71,9 +71,9 @@ class Application extends StatelessWidget {
             create: (context) => AuthenticationBloc(
               authenticationRepository:
                   context.read<AuthenticationRepository>(),
-              databaseRepository: context.read<DatabaseRepository>(),
               sharedPreferencesRepository:
                   context.read<SharedPreferencesRepository>(),
+              userRepository: context.read<UserRepository>(),
             ),
           ),
         ],
